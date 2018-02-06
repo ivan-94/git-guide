@@ -1,0 +1,25 @@
+{
+  "name": "git-guide",
+  "version": "1.0.0",
+  "description": "git 版本控制指南",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "gitbook": "gitbook",
+    "serve": "gitbook serve",
+    "build": "gitbook build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/carney520/git-guide.git"
+  },
+  "author": "",
+  "license": "MITk",
+  "bugs": {
+    "url": "https://github.com/carney520/git-guide/issues"
+  },
+  "homepage": "https://github.com/carney520/git-guide#readme",
+  "devDependencies": {
+    "gitbook-cli": "^2.3.2"
+  }
+}

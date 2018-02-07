@@ -71,6 +71,8 @@ $ tree .git/objects
 
 从上面的执行结果可以看出，`foo.txt`和`bar.txt`的散列值是一样的。对于 sha1 编码来说，只要输入的内容一致， 输出的内容也是一致的。所以也说明这两个文件是共享同一个块的。
 
+![blob](images/blob.png)
+
 > 关于 SHA1 散列值:<br/>
 >
 > 上述的 SHA1 散列值可以认为是`对象ID`，通常表示为一个 40 位的 16 进制字符串. Git 会对`对象的内容`应用 SHA1 得到. <br/>
@@ -160,12 +162,13 @@ $ git verify-pack -v .\.git\objects\pack\pack-xxx.idx
 * 目录包含的块, 以及块的文件信息
 * 子目录树
 
-> 注意这里没有包含，目录的路径信息和目录名。这个道理和文件块对象一样，git 是`内容驱动的`. 关于目录的路径和目录名，有父目录对象描述。<br/>
-> 这样，像文件块一样，目录在项目的任意一个位置，目录的内容不变（SHA1 不变）.
+> 注意这里没有包含目录的路径信息和目录名。这个道理和文件块对象一样，git 是`内容驱动的`. 关于目录的路径和目录名，在父目录对象描述。<br/>
+> 这样，像文件块一样，目录不管在项目哪个位置，只要目录包含的内容不变, 目录对象就不变（SHA1 不变）.
 > 另外如果两个不同路径或名字的目录包含的文件和目录是一样的, 这两个目录共享同一个目录对象
 
 那么项目的目录树可以表示为：<br/>
-![结构图](TODO)
+
+![结构图](images/tree.png)
 
 跟文件对象一样，Git 会为目录树计算一个 SHA1 值， 这个 SHA1 值可以用来高效地比对。 比如比较 foo 目录修改前和修改后的 SHA1 值，如果 SHA1 值相等，就说明 foo 目录内容没有变化，没有必要向下递归比对了。
 
@@ -208,10 +211,12 @@ $ git cat-file -p 0c1564
 040000 tree 30c06f321a0a9838685e85ad87c330d067b59515    dir
 ```
 
+![目录树复用](images/tree2.png)
+
 ### 1.3 提交对象
 
 看到这里， 估计你对 git 的工作原理已经有点眉目了。上述的`目录树`可以理解为`项目文件结构的一个快照`. 而我们的`提交记录`就是就是关于`目录树`的时间轴列表。 如图：
-![提交时间轴列表](TODO)
+![提交时间轴列表](images/commits.png)
 
 提交记录就是项目的`变更记录`. Git 同样会为每个提交生成一个`提交对象`. 提交对象包含的内容有：
 
@@ -231,6 +236,7 @@ $ git commit -m "第一个提交"
 # 这个提交对象关联到了上面创建的目录树对象
 $ git rev-parse 985b84
 985b84227a97f0b09ffe86ea16c27cf8ce4dfb6e
+
 $ git cat-file -p 985b84
 tree 0c1564cd525d98a691c29779569348b3bdc0a8ce
 author gq-li <gq-li@mygzb.com> 1518001414 +0800
@@ -239,6 +245,96 @@ committer gq-li <gq-li@mygzb.com> 1518001414 +0800
 第一个提交
 ```
 
+提交对象之间构成的图结构就是项目的整个历史周期. 下面是一个典型`Git flow`驱动下的提交记录图:
+![git flow](images/gitflow.png)
+
 ### 1.4 标签
 
-## 一个文件的提交过程
+支持我们已经大概了解了 Git 的基本原理. 现在介绍最后一个对象, 即标签对象.标前对象是最简单的对象, 你可以将`标签`视作为`提交`的别名,
+或者说标签是提交对象的引用/指针.
+标签可以给你的`提交对象`取一个相对`SHA1值`更好记忆的名字, 比如版本号, 如 v1.0.0.
+所以一个标签对象是和提交对象绑定在一起的, 标签对象的内容有:
+
+* 引用的提交对象
+* 标签的标注
+
+![tags](images/tag.png)
+
+```shell
+# 使用git tag命令创建标签
+$ git tag -a -m "第一个标签信息" v0.0.1 985b84
+
+$ git rev-parse v0.0.1
+303e1bc3317f8b771dfce6c9faf4a319583eaa52
+# 或者通过.git/refs/tags/v0.0.1查看标签名引用的对象SHA1; 结果同上
+$ cat .git/refs/tags/v0.0.1
+
+# 同样使用cat-file来查看标签对象内容
+$ git cat-file -p 303e1bc
+object 0c1564cd525d98a691c29779569348b3bdc0a8ce
+type commit
+tag v0.0.1
+tagger gq-li <gq-li@mygzb.com> 1518010590 +0800
+
+第一个标签信息
+```
+
+### 1.5 那分支是什么?
+
+Git 中并没有所谓的"分支对象", 分支只不多是提交记录的引用, 换句话说, 分支是不同提交记录的开发线的`最新提交`的引用.
+关于提交对象的引用, 都保存在查看`.git/refs`目录
+
+```shell
+$ tree .git/refs
+.git/refs
+├── heads                -- 这里放置的是本地
+│   └── master
+├── remotes              -- 这里放置的是远程版本库的分支
+│   └── origin
+│       ├── HEAD
+│       └── master
+└── tags                 -- 这里放置标签
+```
+
+假设现在创建一个新的分支:
+
+```shell
+# 最新的提交对象为
+(master)$ git rev-parse master
+0c1564cd525d98a691c29779569348b3bdc0a8ce
+# 创建并切换到dev分支
+(master)$ git checkout -b dev
+
+# 和master一样, 指向同一个分支. 即在同一个节点
+(dev)$ git rev-parse dev
+0c1564cd525d98a691c29779569348b3bdc0a8ce
+```
+
+![配图](images/branch1.png)
+
+现在在 dev 创建一些内容, 并提交
+
+```shell
+(dev)$ echo "dev here i am" > baz.txt
+(dev)$ git add .
+(dev)$ git commit -m "我在dev分支创建了baz文件"
+[dev 558fc73] 我在dev分支创建了baz文件
+ 1 file changed, 1 insertion(+)
+ create mode 100644 baz.txt
+
+# 查看dev引用的: dev已更新到最新的提交对象
+(dev)$ git rev-parse dev
+558fc733e37a0a8ffa8b874ec3bafd418d08fb9a
+```
+
+![配图](images/branch2.png)
+
+尽管和标签一样都是提交对象的引用, 但是切换到标签后是不能提交新内容的, 而分支则允许继续提交延展.
+
+![配图](images/branch3.png)
+
+由上可以看到, Git 的分支非常轻量, 而 SVN 的分支则需要拷贝文件结构. 当 Git 进行分支切换时, 会将当前工作区的文件系统, 还原到分支引用的`提交对象`所绑定的`目录对象`.
+
+### 1.6 索引
+
+## 2. 总结一个文件的提交过程

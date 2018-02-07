@@ -5,7 +5,7 @@
 ### 基础
 
 * [Getting started]()
-* [Git 与 SVN]()
+* [Git 与 SVN](basic/svn.md)
 * [Git 基本概念](basic/basic_concepts.md)
 * [配置/ssh 认证]()
 * 基本命令

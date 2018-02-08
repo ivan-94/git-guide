@@ -6,8 +6,8 @@ fork 工作流更为适合.
 了解常见的工作流有利于组织或创建适合自己团队的工作流, 提交团队协作的效率；常见的工作流有：
 
 * [集中式的工作流](centralized.md)
-* [Fork/Pull Request 工作流](fork.md)
 * [基于功能分支的工作流](feature.md)
 * [Gitflow](gitflow.md)
+* [Fork/Pull Request 工作流](fork.md)
 
 通过下面的介绍，你会发现上面列表后者一般是前者的扩展和优化。

@@ -70,3 +70,28 @@ ok, 假设 Jim 已经将 very cool 功能开发完毕了，现在要推送到远
 项目成员可以对这个分支的提交进行讨论和 代码 review, 最后由`项目负责人`合并到`master`
 
 ![pull request](images/pr3.png)
+
+### 2.4 合并 Pull Request
+
+Pull Request 可以在`gitlab`或`github`的页面上进行， 如果你要使用自定义的策略进行合并。负责人也可以将分支拉取到本地进行合并.
+
+```shell
+$ git checkout master
+# 保持master为最新版本
+$ git pull
+
+# 合并远程分支到master分支 等价于: `git merge feature/very-cool`
+$ git pull origin feature/very-cool
+
+# 推送最新版本到远程版本库
+$ git push
+```
+
+如果你不需要保留分支了，可以使用下列命令删除分支
+
+```shell
+# 删除分支：
+$ git branch -d feature/very-cool
+# 删除远程分支
+$ git push -d origin feature/very-cool
+```

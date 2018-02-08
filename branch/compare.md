@@ -10,4 +10,6 @@ fork 工作流更为适合.
 * [Gitflow](gitflow.md)
 * [Fork/Pull Request 工作流](fork.md)
 
-通过下面的介绍，你会发现上面列表后者一般是前者的扩展和优化。
+通过下面的介绍，你会发现上面列表后者一般是前者的扩展和优化:
+
+![工作流比较](images/workflow.png)

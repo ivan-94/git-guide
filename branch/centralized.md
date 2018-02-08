@@ -5,7 +5,7 @@
 * 使用`中央仓库`作为本地版本库同步的唯一入口。
 * 只有一个`master`分支
 
-![集中式工作流配图](TODO)
+![集中式工作流配图](images/centralized1.png)
 
 尽管和 SVN 类似，但和 SVN 相比，Git 还有以下优势：
 
@@ -32,7 +32,7 @@ $ ssh user@myhost
 $ git init --bare /path/to/myrepo.git
 ```
 
-![裸仓库](TODO)
+![裸仓库](images/bare-repo.png)
 
 创建完仓库之后, 团队成员就可以将其克隆到本地进行开发：
 
@@ -40,7 +40,7 @@ $ git init --bare /path/to/myrepo.git
 $ git clone ssh://user@myhost/path/to/myrepo.git
 ```
 
-![克隆](TODO)
+![克隆](images/clone.png)
 
 ### 2.2 开发和提交
 
@@ -61,7 +61,7 @@ $ git commit -m "初始化项目， 新建hello.txt"
 
 到目前为止，变更还在本地版本库，我们需要通过 `push` 命令，将变更推送到远程版本库:
 
-![推送配图](TODO)
+![推送配图](images/push.png)
 
 ```shell
 # 查看远程版本库
@@ -84,11 +84,12 @@ $ git push origin master
 ```
 
 目前的分支状态， 可以看到 master 和远程分支都指向了同一个提交对象：
+
 ![after push](images/push1.png)
 
 现在，其他成员也要将你的提交拉取下来, 拉取使用`pull`命令
 
-![拉取配图](TODO)
+![拉取配图](images/pull.png)
 
 ```shell
 (Jim)$ git pull origin master
@@ -98,7 +99,7 @@ $ git push origin master
 
 假设你和另外一个同事 Jim 正在同时开发这个项目. 你修改了多次 hello.txt, 提交了多次代码到远程库，而 Jim 在创建另一个文件开发完新功能准备提交. 现在的提交图为：
 
-![提交图]()
+![提交图](images/commit1.png)
 
 ```shell
 # Jim很有成就感地准备提交到远程版本库
@@ -119,7 +120,17 @@ git 也是如此。Git 推荐在提交前使用`git pull`拉取最新的版本�
 # 拉取最新远程分支, 合并之后会生成一条新的“合并提交”记录
 (Jim)$ git pull
 (Jim)$ git status
-TODO: 添加结果
+On branch master
+Your branch and 'origin/master' have diverged,
+and have 2 and 2 different commits each, respectively.
+  (use "git pull" to merge the remote branch into yours)
+
+All conflicts fixed but you are still merging.
+  (use "git commit" to conclude merge)
+
+Changes to be committed:
+
+	modified:   hello.txt
 
 (Jim)$ git commit -m "合并远程分支"
 # 如果有冲突，修复了冲突之后就可以重新提交了
@@ -128,4 +139,4 @@ TODO: 添加结果
 
 现在的提交图为：
 
-![合并后提交图](images/pull1.png)
+![合并后提交图](images/commit2.png)

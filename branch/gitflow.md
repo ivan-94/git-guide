@@ -59,4 +59,148 @@ GitFlow 使用两个分支来记录项目的历史记录，即`master`分支和`
 
 ## 2. 示例
 
-SMS 项目为例
+这里以 SMS 项目为例, 来展示如何应用 Git Flow 工作流.
+
+### 2.1 初始化项目
+
+首先创建项目, 并创建一个 develop 分支, 以后更多操作是在 develop 分支上进行的:
+
+```shell
+$ mkdir sms && cd sms
+# 初始化git版本库
+$ git init
+# 添加远程版本库
+$ git remote add origin git@myhost.com:web/sms.git
+# 新建develop分支并切换
+$ git checkout -b develop
+
+# 初始化项目
+$ echo '# SMS项目' > README.md
+# 创建.gitignore文件, 用于忽略一些临时文件或自动编译生成文件
+$ touch .gitignore
+# ...
+$ git add .
+$ git commit -m "初始化SMS 项目框架"
+# 推送到远程开发分支
+$ git push -u origin develop
+```
+
+![配图]()
+
+### 2.2 功能开发
+
+现在我和清茂开始独立开始自己的功能, 比如, 我开发`计费`, 清茂开发`统计`. 我们都新建自己的功能分支, 独立开发,独立测试, 互不干扰.
+
+```shell
+# 克隆版本库
+(我)$ git clone origin git@myhost.com:web/sms.git
+
+# 切换到develop分支
+(我)$ git checkout develop
+
+# 创建功能分支, 功能分支是从开发分支分叉出去的
+(我)$ git checkout -b feature/charging
+
+# 现在可以愉快地开发新功能了
+....
+# 将分支推送到远程版本库
+(我)$ git push origin feature/charging
+```
+
+### 2.3 代码 Review 和合并
+
+ok, 我已经完成计费的功能, 而且基本功能也通过了测试, 是时候合并到`开发分支`了. 我发起了 Pull Request 了, 接受群众 Review.
+项目负责人可以接收 Pull Request 并将分支合并到`开发分支`.
+
+当然 Pull Request 只是一个可选的步骤, 你可以直接将分支合并到`开发分支`.
+
+### 2.4 发布分支
+
+现在统计和计费都开发完毕了, 项目负责人景烽掐指一算, 发布新版本吉时已到, 假设是 v0.1.0, 从`开发分支`中拉取出一个发布分支:
+
+```shell
+# 保持最新
+$ git pull
+$ git checkout develop
+$ git checkout -b release/v0.1.0
+$ git push -u origin release/v0.1.0
+```
+
+我们已经开始新的功能了, 突然间测试报了个 bug, 我得优先处理这个 bug:
+
+```shell
+# 但是在切换分支报了个错:
+(我)$ git checkout release/v0.1.0
+error: Your local changes to the following files would be overwritten by checkout:
+  xxx.js
+Please commit your changes or stash them before you switch branches.
+Aborting
+```
+
+意思是, 你的本地已经修改了一些文件, 如果就这样 checkout 过去, 将会被覆盖你可以提交你的变更, 或者储藏(stash)起来.
+因为我的代码写到一半, 不能将没有意义的代码提交到版本库. 所以只能使用后者
+
+```shell
+# 保存现场
+(我)$ git stash
+(我)$ git checkout release/v0.1.0
+
+# 修复完bug回到原来的功能分支
+# 恢复现场
+(我)$ git stash pop
+```
+
+### 2.5 合并发布分支
+
+发布分支在经过几次迭代之后, 稳定性已经足以合并到`master`了:
+
+```shell
+# 切换到master分支
+$ git checkout master
+
+# 合并分支
+$ git merge release/v0.1.0
+# 打个tag
+$ git tag -a v0.1.0 -m "v0.1.0: 包含了计费和统计等功能更新"
+# 推送版本库
+$ git push
+# 推送tags
+$ git push --tags
+
+# 切换到开发分支
+$ git checkout develop
+$ git merge release/v0.1.0
+$ git push
+
+# 删除发布分支
+$ git branch -d release/v0.1.0
+# 删除远程发布分支
+$ git push -d release/v0.1.0
+```
+
+### 2.6 修复 bug
+
+客户报了一个生产版本的 bug, 这 bug 较为影响使用, 我们必须马上修复这个 bug 并发个版
+
+```shell
+# 切换到master分支
+$ git checkout master
+# 创建buf修复分支
+$ git checkout -b bug/B20180212
+# 修复bug并提交
+$ git commit -m "紧急修复xxxbug"
+
+# 合并到master
+$ git checkout master
+$ git merge bug/B20180212
+$ git tag -a v0.1.1 -m "紧急修复xxxbug"
+$ git push
+
+# 合并到开发分支, 因为开发分支同样有这个bug
+$ git checkout develop
+$ git merge bug/B20180212
+$ git push
+
+# 删除bug分支
+$ git branch -d bug/B20180212
+```

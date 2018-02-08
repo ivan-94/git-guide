@@ -42,3 +42,6 @@
 ### 常见问题
 
 ### 扩展
+
+* [学习资料](further/learn.md)
+* [工具/扩展](further/tools.md)

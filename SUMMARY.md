@@ -24,7 +24,8 @@
 
 ### 分支管理
 
-* [常见的工作流](branch/compare.md)
+* [分支操作](branch/operation.md)
+* [工作流](branch/compare.md)
   * [集中式的工作流](branch/centralized.md)
   * [功能分支工作流](branch/feature.md)
   * [GitFlow 工作流](branch/gitflow.md)

@@ -1,4 +1,9 @@
-# 工具
+# 工具/扩展
+
+## Cheat-sheet
+
+* [git-cheat-sheet](https://github.com/arslanbilal/git-cheat-sheet)
+* [git-flow-cheatsheet](https://github.com/danielkummer/git-flow-cheatsheet)
 
 ## 脚本和工具(Scripts and Tools)
 

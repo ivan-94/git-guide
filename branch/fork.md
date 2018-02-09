@@ -26,3 +26,37 @@ Fork 其实不是一个新东西, 当我们在`github`上点击`fork`的时候, 
 4. 上游项目的所有者决定是否合并你的代码
 
 ## 4. 示例
+
+### 4.1 fork 项目
+
+首先 fork 上游项目:
+![fork](images/fork_example1.png)
+
+### 4.2 开发新功能
+
+将项目克隆到本地，并在功能分支上开发新功能：
+
+```shell
+# 克隆
+$ git clone git@github.com:me/test-fork.git
+# 新建功能分支
+$ git checkout -b feature/awesome
+# ... 新增功能， 提交到远程
+$ git push -u origin feature/awesome
+```
+
+### 4.3 提交 Pull Request
+
+现在打开项目主页， 就可以开始提交 Pull Request 了
+
+![pull request](images/fork_example2.png)
+
+假设清茂跟我一样 fork 了`test-fork`项目，我不仅可以将 PR 提交给`上游项目`, 也可以提交给`同源项目`：
+
+![pull request](images/fork_example3.png)
+
+### 4.4 合并
+
+一般开源项目都会严格审验每个 PR，`GitHub`支持在每个 PR 提交后，对他跑一些集成测试，进行一些讨论和 Review。下面是`React`项目的一个 PR 页面, 这里显示 PR 是否经过了测试、分支代码是否冲突, 项目管理员还可以要求变更：
+
+![pull request](images/fork_example4.png)

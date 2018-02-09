@@ -30,6 +30,7 @@
   * [功能分支工作流](branch/feature.md)
   * [GitFlow 工作流](branch/gitflow.md)
   * [Fork 工作流](branch/fork.md)
+* [EIM 组团队工作流规范](branch/eim.md)
 
 ### 规范
 
